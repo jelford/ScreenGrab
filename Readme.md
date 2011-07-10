@@ -16,12 +16,9 @@ code, you will need to install headers for each of those libraries:
 
 Similar commands are available for Debian/Ubuntu users
 
-#Make:
-
-`g++ -o ScreenGrab -lX11 `pkg-config --cflags --libs cairo` main.cpp`
-
 #Run:
 
+ * `make` to build ScreenGrab
  * `./nohup ScreenGrab` to run ScreenGrab
  * `ctrl+prtscn` to Capture a screen shot and save to out.png
  * `ctrl+q` to kill the program
