@@ -61,6 +61,10 @@ class KeyboardGrabber {
 		handlers[keycode] = wrapped_handler;
 	}
 
+	bool handleKeystroke(int keycode) {
+		return (handlers[keycode]->operator())();
+	}
+
 	void mainloop() 
 	{
 		// Let X know we'd like to actually receive our keyboard events please
@@ -72,7 +76,7 @@ class KeyboardGrabber {
 			XNextEvent(display, &event);
 			switch(event.type) {
 				case KeyPress:
-					shouldContinue = (handlers[event.xkey.keycode]->operator())();
+					shouldContinue = handleKeystroke(event.xkey.keycode);
 					break;
 				default:
 					break;
