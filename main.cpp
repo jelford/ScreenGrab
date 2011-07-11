@@ -26,7 +26,7 @@ std::string get_output_filename() {
 	return output.str();
 }
 
-class ScreenGrabHandler {
+struct ScreenGrabHandler {
 	public:
 		ScreenGrabHandler(ScreenGrabber& sg) : sg(sg) {} ;
 
@@ -40,7 +40,7 @@ class ScreenGrabHandler {
 		ScreenGrabber sg;
 };
 
-class QuitHandler {
+struct QuitHandler {
 	public:
 		bool operator()(void) {
 			return false;
