@@ -41,11 +41,10 @@ class KeyboardGrabber {
 	}
 
 	template <typename T>
-	void addToHandlers(T handler, std::string key, bool ctrl, bool meta, bool alt, bool shift)
-	{
+	void addToHandlers(T handler, std::string key, bool ctrl, bool alt, bool shift) {
 		Functor<bool>* wrapped_handler = new Functor_impl<T, bool>(handler);
 
-		unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0);
+		unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
 		int keycode = get_keycode_from_string(key);
 
 		// Set up the hook
