@@ -41,7 +41,7 @@ class KeyboardGrabber {
 	}
 
 	template <typename T>
-	void addToHandlers(T* handler, std::string key, bool ctrl, bool meta, bool alt, bool shift)
+	void addToHandlers(T handler, std::string key, bool ctrl, bool meta, bool alt, bool shift)
 	{
 		Functor<bool>* wrapped_handler = new Functor_impl<T, bool>(handler);
 

@@ -52,11 +52,11 @@ int main(int argc, char ** argv) {
 	KeyboardGrabber keyboard;
 	ScreenGrabber screenGrabber;
 	ScreenGrabHandler screenHandler(screenGrabber);
-	keyboard.addToHandlers(&screenHandler,
+	keyboard.addToHandlers(screenHandler,
 				"Print",
 				true, false, false, false);
 	QuitHandler quit;
-	keyboard.addToHandlers(&quit,
+	keyboard.addToHandlers(quit,
 				"q",
 				true, false, false, false);
 	keyboard.mainloop();
