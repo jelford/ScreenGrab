@@ -1,0 +1,12 @@
+*.in
+*~
+aclocal.m4
+*.swp
+autom4te.cache/*
+
+configure
+depcomp
+install-sh
+missing
+
+INSTALL
