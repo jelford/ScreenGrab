@@ -16,11 +16,22 @@ code, you will need to install headers for each of those libraries:
 
 Similar commands are available for Debian/Ubuntu users
 
-#Run:
+#Build ScreenGrab:
 
- * `make` to build ScreenGrab
- * `./nohup ScreenGrab` to run ScreenGrab
- * `ctrl+prtscn` to Capture a screen shot and save to out.png
+ * `./autogen.sh` will run Autoconf and friends
+ * Move to a build directory
+ * `<path to source>/configure`
+ * `make`
+
+#Install ScreenGrab:
+
+ * `make install`
+ * You can remove it with `make remove`
+
+#Usage:
+
+ *  `nohup screengrab &` to run ScreenGrab in the background
+ * `ctrl+prtscn` to Capture a screen shot and save to the output dir
  * `ctrl+q` to kill the program
 
 # Future work:
