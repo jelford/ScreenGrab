@@ -26,13 +26,14 @@ Similar commands are available for Debian/Ubuntu users
 #Install ScreenGrab:
 
  * `make install`
- * You can remove it with `make remove`
+ * You can remove it with `make uninstall`
 
 #Usage:
 
- *  `nohup screengrab &` to run ScreenGrab in the background
+ * `screengrab &` to run ScreenGrab in the background
  * `ctrl+prtscn` to Capture a screen shot and save to the output dir
- * `ctrl+q` to kill the program
+   * Grabs are saved under `~/.screengrab/output/`
+ * `ctrl+alt+q` to kill the program
 
 # Future work:
 
