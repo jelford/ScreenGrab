@@ -1,18 +1,24 @@
 #include <iostream>
+#include <cstdlib> //getenv
 #include <cairo/cairo.h>
 #include <sys/stat.h>
 #include <string>
-#include <string.h>
 #include <sstream>
 #include <time.h>
 #include "keyboard.hpp"
 #include "screenshot.hpp"
+#include "config.h"
 
-std::string output_dir = "output";
+std::string output_dir;
 
 void check_output_directory() {
 	// Don't actually care if this fails, so long as we can write there...
-	int n = mkdir(output_dir.c_str(), 0777);
+        char* home_dir = getenv("HOME");
+        output_dir = home_dir;
+        output_dir += "/.screengrab";
+        mkdir(output_dir.c_str(), 0777);
+        output_dir += "/output";
+        mkdir(output_dir.c_str(), 0777);
 }
 
 std::string get_output_filename() {
