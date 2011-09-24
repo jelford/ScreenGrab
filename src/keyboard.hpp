@@ -1,6 +1,5 @@
 #include <iostream>
 #include <map>
-#include <functional>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <assert.h>
