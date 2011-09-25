@@ -1,6 +1,7 @@
 #ifndef cairo_helper_HPP
 #define cairo_helper_HPP
 
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
 namespace cairo_helpers {
