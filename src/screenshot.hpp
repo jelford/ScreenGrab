@@ -3,14 +3,14 @@
 #include <cairo/cairo-xlib.h>
 #include <iostream>
 #include <fstream>
-
 #include <stdlib.h>
+
+#include "cairo_helper.hpp"
 
 class ScreenGrabber {
 	public:
-		cairo_surface_t* grab_screen() {
-			std::cout << "Taking a screen shot now!" << std::endl;
-			Display* display = XOpenDisplay(0);
+                boost::shared_ptr< std::vector<unsigned char> > grab_screen() {
+			Display* display = XOpenDisplay(NULL);
 			Window rootWindow = DefaultRootWindow(display);
 			int x, y;
 			unsigned int width, height, border_width, border_height, depth;
@@ -26,8 +26,9 @@ class ScreenGrabber {
 				DefaultVisual(display, 0),
 				width,
 				height);
-			return screen_surface;			
-		}
+                        boost::shared_ptr< std::vector<unsigned char> > out = cairo_helpers::cairo_to_mem_png(screen_surface);
+                        cairo_surface_destroy(screen_surface);
+			return out;
+                }
 
 };
-
