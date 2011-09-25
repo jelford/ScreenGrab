@@ -1,4 +1,5 @@
-*.in
+Makefile.in
+
 *~
 aclocal.m4
 *.swp
