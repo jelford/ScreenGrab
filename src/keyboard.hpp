@@ -18,7 +18,6 @@ class KeyboardGrabber {
 
 		Display* display;
 		Window rootWindow;
-		bool ctrl, meta, alt, shift;
 		std::map<int, Functor<bool>* > handlers;
 
 	public:

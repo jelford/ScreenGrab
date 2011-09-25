@@ -11,7 +11,6 @@
 #include <time.h>
 #include "keyboard.hpp"
 #include "screenshot.hpp"
-#include "config.h"
 
 namespace screengrab {
     using namespace std;
@@ -46,7 +45,7 @@ namespace screengrab {
             public:
                     ScreenGrabHandler(ScreenGrabber& sg) : sg(sg) {} ;
 
-                    bool operator()(void) {
+                    bool operator()(void) const {
                             // Get a bitvector representing a png of the screen
                             bitvector png = sg.grab_screen();
 
@@ -62,7 +61,7 @@ namespace screengrab {
 
     struct QuitHandler {
             public:
-                    bool operator()(void) {
+                    bool operator()(void) const {
                             return false;
                     }
     };

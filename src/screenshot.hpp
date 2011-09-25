@@ -9,11 +9,11 @@
 
 class ScreenGrabber {
 	public:
-                boost::shared_ptr< std::vector<unsigned char> > grab_screen() {
+                boost::shared_ptr< std::vector<unsigned char> > grab_screen() const {
 			Display* display = XOpenDisplay(NULL);
 			Window rootWindow = DefaultRootWindow(display);
 			int x, y;
-			unsigned int width, height, border_width, border_height, depth;
+			unsigned int width, height, border_width, depth;
 			Window theRootOfTheRoot;
 			XGetGeometry(display, rootWindow, &theRootOfTheRoot,
 					&x, &y, &width, &height, 
