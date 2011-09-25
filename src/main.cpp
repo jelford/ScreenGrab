@@ -1,9 +1,7 @@
 #include <iostream>
-#include <cstdlib> //getenv
 #include <cairo/cairo.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
-#include <sys/stat.h>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -18,11 +16,6 @@ namespace screengrab {
     using namespace std;
     
     typedef boost::shared_ptr< std::vector<unsigned char> > bitvector;
-
-    void check_output_directory() {
-            // Don't actually care if this fails, so long as we can write there...
-            boost::filesystem::create_directories(OUTPUT_DIR);
-    }
 
     string get_output_filename() {
             time_t epoch_time;
@@ -65,7 +58,7 @@ namespace screengrab {
 using namespace screengrab;
 
 int main(int argc, char ** argv) {
-        check_output_directory();
+        boost::filesystem::create_directories(OUTPUT_DIR);
         KeyboardGrabber keyboard;
         ScreenGrabber screenGrabber;
         ScreenGrabHandler screenHandle(screenGrabber);
