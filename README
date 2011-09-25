@@ -14,6 +14,12 @@ code, you will need to install headers for each of those libraries:
     sudo yum install cairo-devel
     sudo yum groupinstall "X Development Tools"
 
+You will also need boost modules installed
+
+    Fedora:
+    sudo yum install boost          # For users
+    sudo yum install boost-devel    # Development headers
+
 Similar commands are available for Debian/Ubuntu users
 
 #Build ScreenGrab:
