@@ -6,8 +6,8 @@
 namespace cairo_helpers {
 
     cairo_status_t write_png_stream_to_byte_array(void *in_closure, const unsigned char* data, unsigned int length) {
-        boost::shared_ptr< std::vector<unsigned char> > closure = *((boost::shared_ptr< std::vector<unsigned char> > *) in_closure);
-        closure->insert(closure->end(), data, data + length);
+        boost::shared_ptr< std::vector<unsigned char> >* closure = (boost::shared_ptr< std::vector<unsigned char> > *) in_closure;
+        closure->get()->insert(closure->get()->end(), data, data + length);
         return CAIRO_STATUS_SUCCESS;
     }
 
