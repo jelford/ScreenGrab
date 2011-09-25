@@ -16,7 +16,7 @@ AC_SUBST([BOOST_LIBS])
 platform=`uname`
 AC_SUBST([platform])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/config.h])
+AC_CONFIG_FILES([Makefile src/Makefile src/config.h src/screenshot.hpp src/keyboard.hpp])
 AC_CONFIG_HEADERS([global_config.h])
 AC_OUTPUT
 
