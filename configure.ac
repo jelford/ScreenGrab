@@ -17,6 +17,6 @@ platform=`uname`
 AC_SUBST([platform])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/config.h])
-AC_CONFIG_HEADERS([global_config.h])
+AC_CONFIG_HEADERS([src/global_config.h])
 AC_OUTPUT
 

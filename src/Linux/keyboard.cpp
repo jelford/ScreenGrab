@@ -26,9 +26,9 @@ KeyboardGrabber::KeyboardGrabber() {
     rootWindow = DefaultRootWindow(display);
 }
 
-KeyboardGrabber::~KeyboardGrabber() {}
+KeyboardGrabber::~KeyboardGrabber(){}
 
-void KeyboardGrabber::addToHandlers(boost::function<bool ()>* handler, std::string key, bool ctrl, bool alt, bool shift) {
+void KeyboardGrabber::addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift) {
     unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
     int keycode = get_keycode_from_string(key);
 
@@ -46,7 +46,7 @@ void KeyboardGrabber::addToHandlers(boost::function<bool ()>* handler, std::stri
 }
 
 bool KeyboardGrabber::handleKeystroke(int keycode) {
-    return (handlers[keycode]->operator())();
+    return handlers[keycode]();
 }
 
 void KeyboardGrabber::mainloop() {
@@ -60,6 +60,7 @@ void KeyboardGrabber::mainloop() {
             switch(event.type) {
                     case KeyPress:
                             shouldContinue = handleKeystroke(event.xkey.keycode);
+                            std::cout << "shouldContinue: " << shouldContinue << std::endl;
                             break;
                     default:
                             break;

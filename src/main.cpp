@@ -32,8 +32,8 @@ namespace screengrab {
 
     struct ScreenGrabHandler {
             public:
-                    ScreenGrabHandler(ScreenGrabber& sg) : sg(sg) {} ;
-
+                    ScreenGrabHandler(ScreenGrabber sg) : sg(sg) { }
+                    
                     bool operator()(void) const {
                             // Get a bitvector representing a png of the screen
                             bitvector png = sg.grab_screen();
@@ -44,6 +44,7 @@ namespace screengrab {
                             copy(png->begin(), png->end(), file_iterator);
                             return true;
                     }
+
             private:
                     ScreenGrabber sg;
     };
@@ -63,12 +64,12 @@ int main(int argc, char ** argv) {
         boost::filesystem::create_directories(OUTPUT_DIR);
         KeyboardGrabber keyboard;
         ScreenGrabber screenGrabber;
-        boost::function< bool () > screenHandle = ScreenGrabHandler(screenGrabber);
-        keyboard.addToHandlers(&screenHandle,
+        boost::function< bool () > screenHandleFunction = ScreenGrabHandler(screenGrabber);
+        keyboard.addToHandlers(screenHandleFunction,
                                 "Print",
                                 true, false, false);
-        boost::function< bool() > quithandle = QuitHandler();
-        keyboard.addToHandlers(&quithandle,
+        boost::function< bool() > quitHandleFunction = QuitHandler();
+        keyboard.addToHandlers(quitHandleFunction,
                                 "q",
                                 true, true, false);
         keyboard.mainloop();
