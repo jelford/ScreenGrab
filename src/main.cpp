@@ -9,6 +9,7 @@
 #include <ostream>
 #include <iterator>
 #include <time.h>
+#include <boost/function.hpp>
 #include "keyboard.hpp"
 #include "screenshot.hpp"
 #include "config.h"
@@ -62,12 +63,12 @@ int main(int argc, char ** argv) {
         boost::filesystem::create_directories(OUTPUT_DIR);
         KeyboardGrabber keyboard;
         ScreenGrabber screenGrabber;
-        ScreenGrabHandler screenHandle(screenGrabber);
-        keyboard.addToHandlers(screenHandle,
+        boost::function< bool () > screenHandle = ScreenGrabHandler(screenGrabber);
+        keyboard.addToHandlers(&screenHandle,
                                 "Print",
                                 true, false, false);
-        QuitHandler quit;
-        keyboard.addToHandlers(quit,
+        boost::function< bool() > quithandle = QuitHandler();
+        keyboard.addToHandlers(&quithandle,
                                 "q",
                                 true, true, false);
         keyboard.mainloop();

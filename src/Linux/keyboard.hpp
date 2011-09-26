@@ -4,7 +4,7 @@
 #include <X11/Xutil.h>
 #include <assert.h>
 
-#include "Functor.hpp"
+#include <boost/function.hpp>
 
 class KeyboardGrabber {
 	private:
@@ -18,7 +18,7 @@ class KeyboardGrabber {
 
 		Display* display;
 		Window rootWindow;
-		std::map<int, Functor<bool>* > handlers;
+		std::map<int, boost::function<bool ()>* > handlers;
 
 	public:
 
@@ -33,15 +33,12 @@ class KeyboardGrabber {
 	}
 
 	~KeyboardGrabber() {
-		for(std::map<int, Functor<bool>*>::iterator it = handlers.begin(); it != handlers.end(); ++it) {
+		for(std::map<int, boost::function<bool () >* >::iterator it = handlers.begin(); it != handlers.end(); ++it) {
 			delete it->second;
 		}
 	}
 
-	template <typename T>
-	void addToHandlers(T handler, std::string key, bool ctrl, bool alt, bool shift) {
-		Functor<bool>* wrapped_handler = new Functor_impl<T, bool>(handler);
-
+	void addToHandlers(boost::function<bool ()>* handler, std::string key, bool ctrl, bool alt, bool shift) {
 		unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
 		int keycode = get_keycode_from_string(key);
 
@@ -55,7 +52,7 @@ class KeyboardGrabber {
 			GrabModeAsync);  	// on both keyboard and pointer
 		// Then we do the same again, allowing for Numlock/Capslock (X distinguishes)
 		XGrabKey(display, keycode, modifierMask | LockMask, rootWindow, true, GrabModeAsync, GrabModeAsync);
-		handlers[keycode] = wrapped_handler;
+		handlers[keycode] = handler;
 	}
 
 	bool handleKeystroke(int keycode) {
