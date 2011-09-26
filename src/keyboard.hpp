@@ -1,20 +1,19 @@
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-#include <map>
+#ifndef keyboard_HPP
+#define keyboard_HPP
 
-#include <X11/Xlib.h>
+#include <boost/function.hpp>
+#include <string>
+
+#include "keyboard_pimpl.hpp"
 
 class KeyboardGrabber {
-	private:
-            int get_keycode_from_string(std::string key_string) const;
-            Display* display;
-            Window rootWindow;
-            std::map<int, boost::function<bool ()> > handlers;
-
-	public:
-            KeyboardGrabber();
-            virtual ~KeyboardGrabber();
-            void addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift);
-            bool handleKeystroke(int keycode); 
-            void mainloop();
+    private:
+        KeyboardGrabberPimpl* _pimpl;
+    public:
+        KeyboardGrabber();
+        virtual ~KeyboardGrabber();
+        void addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift);
+        void mainloop();
 };
+
+#endif
