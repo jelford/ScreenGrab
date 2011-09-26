@@ -26,11 +26,7 @@ KeyboardGrabber::KeyboardGrabber() {
     rootWindow = DefaultRootWindow(display);
 }
 
-KeyboardGrabber::~KeyboardGrabber() {
-    for(std::map<int, boost::function<bool () >* >::iterator it = handlers.begin(); it != handlers.end(); ++it) {
-            delete it->second;
-    }
-}
+KeyboardGrabber::~KeyboardGrabber() {}
 
 void KeyboardGrabber::addToHandlers(boost::function<bool ()>* handler, std::string key, bool ctrl, bool alt, bool shift) {
     unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
