@@ -10,10 +10,16 @@ class KeyboardGrabber {
     private:
         KeyboardGrabberPimpl* _pimpl;
     public:
-        KeyboardGrabber();
-        virtual ~KeyboardGrabber();
-        void addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift);
-        void mainloop();
+        KeyboardGrabber() : _pimpl(new KeyboardGrabberPimpl()) { }
+        virtual ~KeyboardGrabber() { delete(this->_pimpl); }
+        void addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift)
+        {
+            this->_pimpl->addToHandlers(handler, key, ctrl, alt, shift);
+        }
+        void mainloop()
+        {
+            this->_pimpl->mainloop();
+        }
 };
 
 #endif

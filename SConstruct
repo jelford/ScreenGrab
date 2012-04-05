@@ -1,0 +1,42 @@
+import platform
+import os
+target_platform = platform.uname()[0]
+print(target_platform)
+
+from scripts import platform_specific, headertools
+
+
+env = Environment()
+
+if not env.GetOption('clean'):
+    conf = Configure(env)
+
+    # Check we will be able to build anything
+    if not conf.CheckCXX():
+        fail('!! Your compiler and/or environment is not correctly configured !!')
+
+    hCheck = headertools.HeaderChecker(conf)
+
+    hCheck(['boost/filesystem.hpp', 'boost/shared_ptr.hpp', 'boost/function.hpp'],
+        message='ScreenGrab requires BOOST development headers to build')
+
+    platform_specific.check_headers(conf)
+
+    env = conf.Finish()
+    # Finish checks
+
+    output_dir = ARGUMENTS.get('output-dir', os.path.join(os.environ['HOME'], '.screengrab', 'output'))
+    if output_dir not in ARGUMENTS and 'interactive' in ARGUMENTS:
+        output_dir = raw_input('Please specify screen-grab output directory: ')
+        
+    env.Append(CPPDEFINES = {'OUTPUT_DIR': '\\"{output_dir}\\"'.format(output_dir=output_dir)})
+
+sources = [x.format(platform=target_platform) for x in ['main.cpp', '{platform}/keyboard_pimpl.cpp', '{platform}/screenshot.cpp']]
+
+
+platform_libs = platform_specific.libs
+
+SConscript('src/SConscript.py',
+    variant_dir='build',
+    duplicate=1, 
+    exports=['env', 'sources', 'platform_libs', 'target_platform'])

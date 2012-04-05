@@ -12,7 +12,6 @@
 #include <boost/function.hpp>
 #include "keyboard.hpp"
 #include "screenshot.hpp"
-#include "config.h"
 
 namespace screengrab {
     using namespace std;
