@@ -1,4 +1,3 @@
-#include <iostream>
 #include <map>
 #include <string>
 #include <X11/Xlib.h>
@@ -8,10 +7,10 @@
 
 #include "keyboard_pimpl.hpp"
 
-int KeyboardGrabberPimpl::get_keycode_from_string(std::string key_string) const{
+KeyCode KeyboardGrabberPimpl::get_keycode_from_string(std::string key_string) const{
     const char* key = key_string.c_str();
     assert(XStringToKeysym(key) != NoSymbol);
-    int keycode = XKeysymToKeycode(display, XStringToKeysym(key));
+    KeyCode keycode = XKeysymToKeycode(display, XStringToKeysym(key));
     assert(keycode);
     return keycode;
 }
@@ -33,8 +32,8 @@ KeyboardGrabberPimpl::KeyboardGrabberPimpl() {
 KeyboardGrabberPimpl::~KeyboardGrabberPimpl(){}
 
 void KeyboardGrabberPimpl::addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift) {
-    unsigned int modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
-    int keycode = get_keycode_from_string(key);
+    auto modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
+    auto keycode = get_keycode_from_string(key);
 
     // Set up the hook
     XGrabKey(display,
@@ -44,8 +43,28 @@ void KeyboardGrabberPimpl::addToHandlers(boost::function<bool ()> &handler, std:
             true,			// Pass on events to owner window
             GrabModeAsync, 	 	// Non-blocking
             GrabModeAsync);  	// on both keyboard and pointer
-    // Then we do the same again, allowing for Numlock/Capslock (X distinguishes)
+
+
+    /* X would like us to be explicit about whether numlock, capslock, or
+     * scroll-lock are enabled. This looks like a hack -- there really ought
+     * to be a way to specify that we don't care. I haven't found one
+     * (patches welcome)
+     */
+    auto NumLock = Mod2Mask;
+    auto ScrollLock = Mod5Mask;
+
+    // CapsLock
     XGrabKey(display, keycode, modifierMask | LockMask, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    // NumLock
+    XGrabKey(display, keycode, modifierMask | NumLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    // Scroll Lock
+    XGrabKey(display, keycode, modifierMask | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    // Combinations
+    XGrabKey(display, keycode, modifierMask | LockMask | NumLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    XGrabKey(display, keycode, modifierMask | LockMask | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    XGrabKey(display, keycode, modifierMask | NumLock | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+    XGrabKey(display, keycode, modifierMask | LockMask | NumLock | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
+
     handlers[keycode] = handler;
 }
 

@@ -2,6 +2,7 @@
 #define cairo_helper_HPP
 
 #include <vector>
+#include <cairo/cairo.h>
 #include <boost/shared_ptr.hpp>
 
 namespace cairo_helpers {

@@ -8,7 +8,7 @@
 
 class KeyboardGrabberPimpl {
     private:
-        int get_keycode_from_string(std::string key_string) const;       
+        KeyCode get_keycode_from_string(std::string key_string) const;       
         bool handleKeystroke(int keycode); 
         Display* display;
         Window rootWindow;
