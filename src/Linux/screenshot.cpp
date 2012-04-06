@@ -7,7 +7,10 @@
 #include "screenshot.hpp"
 #include "cairo_helper.hpp"
 
-boost::shared_ptr< std::vector<unsigned char> > ScreenGrabber::grab_screen() const{
+using namespace std;
+
+shared_ptr< vector<unsigned char> > ScreenGrabber::grab_screen() const
+{
     Display* display = XOpenDisplay(NULL);
     Window rootWindow = DefaultRootWindow(display);
     int x, y;
@@ -24,7 +27,7 @@ boost::shared_ptr< std::vector<unsigned char> > ScreenGrabber::grab_screen() con
             DefaultVisual(display, 0),
             width,
             height);
-    boost::shared_ptr< std::vector<unsigned char> > out = cairo_helpers::cairo_to_mem_png(screen_surface);
+    auto out = cairo_helpers::cairo_to_mem_png(screen_surface);
     cairo_surface_destroy(screen_surface);
     return out;
 }

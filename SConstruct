@@ -30,6 +30,7 @@ if not env.GetOption('clean'):
         output_dir = raw_input('Please specify screen-grab output directory: ')
         
     env.Append(CPPDEFINES = {'OUTPUT_DIR': '\\"{output_dir}\\"'.format(output_dir=output_dir)})
+    env.Append(CXXFLAGS = ['-O3'])
 
 sources = [x.format(platform=target_platform) for x in ['main.cpp', '{platform}/keyboard_pimpl.cpp', '{platform}/screenshot.cpp']]
 

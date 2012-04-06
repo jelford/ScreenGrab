@@ -2,10 +2,10 @@
 #define screengrabber_HPP
 
 #include <vector>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class ScreenGrabber {
 	public:
-                boost::shared_ptr< std::vector<unsigned char> > grab_screen() const; 
+                std::shared_ptr< std::vector<unsigned char> > grab_screen() const; 
 };
 #endif

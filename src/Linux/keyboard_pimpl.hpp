@@ -3,22 +3,22 @@
 
 #include <map>
 #include <X11/Xlib.h>
-#include <boost/function.hpp>
 #include <string>
+#include <memory>
 
 class KeyboardGrabberPimpl {
     private:
         KeyCode get_keycode_from_string(std::string key_string) const;       
         bool handleKeystroke(int keycode); 
-        Display* display;
         Window rootWindow;
-        std::map<int, boost::function<bool ()> > handlers;
+        Display* display;
+        std::map<int, std::unique_ptr<std::function<bool ()> > > handlers;
     
     public:
         KeyboardGrabberPimpl();
-        ~KeyboardGrabberPimpl();
+        virtual ~KeyboardGrabberPimpl();
 
-        void addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift);
+        void addToHandlers(std::unique_ptr< std::function<bool ()> > &handler, std::string key, bool ctrl, bool alt, bool shift);
  
         void mainloop();
 };

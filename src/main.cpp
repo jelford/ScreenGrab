@@ -1,6 +1,6 @@
 #include <iostream>
+#include <memory>
 #include <cairo/cairo.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
@@ -9,14 +9,14 @@
 #include <ostream>
 #include <iterator>
 #include <time.h>
-#include <boost/function.hpp>
 #include "keyboard.hpp"
 #include "screenshot.hpp"
 
+using namespace std;
+
 namespace screengrab {
-    using namespace std;
     
-    typedef boost::shared_ptr< std::vector<unsigned char> > bitvector;
+    typedef shared_ptr< vector<unsigned char> > bitvector;
 
     string get_output_filename() {
             time_t epoch_time;
@@ -29,9 +29,11 @@ namespace screengrab {
             return output.str();
     }
 
-    struct ScreenGrabHandler {
+    class ScreenGrabHandler {
+            private:
+                    ScreenGrabber sg;
             public:
-                    ScreenGrabHandler(ScreenGrabber sg) : sg(sg) { }
+                    ScreenGrabHandler(ScreenGrabber sg) : sg(sg)  { }
                     
                     bool operator()(void) const {
                             // Get a bitvector representing a png of the screen
@@ -43,12 +45,9 @@ namespace screengrab {
                             copy(png->begin(), png->end(), file_iterator);
                             return true;
                     }
-
-            private:
-                    ScreenGrabber sg;
     };
 
-    struct QuitHandler {
+    class QuitHandler {
             public:
                     bool operator()(void) const {
                             return false;
@@ -63,14 +62,14 @@ int main(int argc, char ** argv) {
         boost::filesystem::create_directories(OUTPUT_DIR);
         KeyboardGrabber keyboard;
         ScreenGrabber screenGrabber;
-        boost::function< bool () > screenHandleFunction = ScreenGrabHandler(screenGrabber);
+        unique_ptr< function< bool () > > screenHandleFunction(new function< bool () >(ScreenGrabHandler(screenGrabber)));
         keyboard.addToHandlers(screenHandleFunction,
                                 "Print",
                                 true, false, false);
-        boost::function< bool() > quitHandleFunction = QuitHandler();
+        unique_ptr< function< bool() > > quitHandleFunction(new function< bool () >(QuitHandler()));
         keyboard.addToHandlers(quitHandleFunction,
                                 "q",
-                                true, true, false);
+                                true, true, false); 
         keyboard.mainloop();
         return 0;
 }

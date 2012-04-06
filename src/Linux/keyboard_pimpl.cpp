@@ -3,11 +3,13 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <assert.h>
-#include <boost/function.hpp>
+#include <memory>
 
 #include "keyboard_pimpl.hpp"
 
-KeyCode KeyboardGrabberPimpl::get_keycode_from_string(std::string key_string) const{
+using namespace std;
+
+KeyCode KeyboardGrabberPimpl::get_keycode_from_string(string key_string) const{
     const char* key = key_string.c_str();
     assert(XStringToKeysym(key) != NoSymbol);
     KeyCode keycode = XKeysymToKeycode(display, XStringToKeysym(key));
@@ -16,8 +18,10 @@ KeyCode KeyboardGrabberPimpl::get_keycode_from_string(std::string key_string) co
 }
 
 bool KeyboardGrabberPimpl::handleKeystroke(int keycode) {
-    return handlers[keycode]();
+    return (*handlers[keycode])();
 }
+
+
 
 KeyboardGrabberPimpl::KeyboardGrabberPimpl() {
     // Establish connection to the XServer
@@ -29,11 +33,15 @@ KeyboardGrabberPimpl::KeyboardGrabberPimpl() {
     rootWindow = DefaultRootWindow(display);
 }
 
-KeyboardGrabberPimpl::~KeyboardGrabberPimpl(){}
+KeyboardGrabberPimpl::~KeyboardGrabberPimpl()
+{
+    XFree(display);
+}
 
-void KeyboardGrabberPimpl::addToHandlers(boost::function<bool ()> &handler, std::string key, bool ctrl, bool alt, bool shift) {
+void KeyboardGrabberPimpl::addToHandlers(unique_ptr< function<bool ()> > &handler, string key, bool ctrl, bool alt, bool shift) {
     auto modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
     auto keycode = get_keycode_from_string(key);
+    (*handler)();
 
     // Set up the hook
     XGrabKey(display,
@@ -65,7 +73,7 @@ void KeyboardGrabberPimpl::addToHandlers(boost::function<bool ()> &handler, std:
     XGrabKey(display, keycode, modifierMask | NumLock | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
     XGrabKey(display, keycode, modifierMask | LockMask | NumLock | ScrollLock, rootWindow, true, GrabModeAsync, GrabModeAsync);
 
-    handlers[keycode] = handler;
+    handlers[keycode] = move(handler);
 }
 
 void KeyboardGrabberPimpl::mainloop() {
