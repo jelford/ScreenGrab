@@ -18,7 +18,7 @@ class KeyboardGrabberPimpl {
         KeyboardGrabberPimpl();
         virtual ~KeyboardGrabberPimpl();
 
-        void addToHandlers(std::unique_ptr< std::function<bool ()> > &handler, std::string key, bool ctrl, bool alt, bool shift);
+        void addToHandlers(std::unique_ptr< std::function<bool ()> > handler, std::string key, bool ctrl, bool alt, bool shift);
  
         void mainloop();
 };

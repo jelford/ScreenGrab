@@ -16,7 +16,7 @@ using namespace std;
 
 namespace screengrab {
     
-    typedef shared_ptr< vector<unsigned char> > bitvector;
+    typedef unique_ptr< vector<unsigned char> > bitvector;
 
     string get_output_filename() {
             time_t epoch_time;
@@ -31,17 +31,18 @@ namespace screengrab {
 
     class ScreenGrabHandler {
             private:
-                    ScreenGrabber sg;
+                    shared_ptr<ScreenGrabber> sg;
             public:
-                    ScreenGrabHandler(ScreenGrabber sg) : sg(sg)  { }
+                    ScreenGrabHandler(shared_ptr<ScreenGrabber> sg) : sg(sg)  { }
                     
                     bool operator()(void) const {
                             // Get a bitvector representing a png of the screen
-                            bitvector png = sg.grab_screen();
+                            bitvector png = sg->grab_screen();
 
                             // Dump the bigvector to a file
                             ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
                             ostream_iterator<unsigned char> file_iterator(outfile, NULL);
+                            assert(png);
                             copy(png->begin(), png->end(), file_iterator);
                             return true;
                     }
@@ -61,13 +62,13 @@ using namespace screengrab;
 int main(int argc, char ** argv) {
         boost::filesystem::create_directories(OUTPUT_DIR);
         KeyboardGrabber keyboard;
-        ScreenGrabber screenGrabber;
+        shared_ptr<ScreenGrabber> screenGrabber(new ScreenGrabber());
         unique_ptr< function< bool () > > screenHandleFunction(new function< bool () >(ScreenGrabHandler(screenGrabber)));
-        keyboard.addToHandlers(screenHandleFunction,
+        keyboard.addToHandlers(move(screenHandleFunction),
                                 "Print",
                                 true, false, false);
         unique_ptr< function< bool() > > quitHandleFunction(new function< bool () >(QuitHandler()));
-        keyboard.addToHandlers(quitHandleFunction,
+        keyboard.addToHandlers(move(quitHandleFunction),
                                 "q",
                                 true, true, false); 
         keyboard.mainloop();

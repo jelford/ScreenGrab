@@ -1,17 +1,24 @@
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <cairo/cairo-xlib.h>
-#include <iostream>
-#include <fstream>
-#include <stdlib.h>
-#include "screenshot.hpp"
-#include "cairo_helper.hpp"
+#include "screengrabber_pimpl.hpp"
 
+#include <X11/Xlib.h>
+#include <cairo/cairo-xlib.h>
+#include "cairo_helper.hpp"
+#include <iostream>
 using namespace std;
 
-shared_ptr< vector<unsigned char> > ScreenGrabber::grab_screen() const
+ScreenGrabber_Pimpl::~ScreenGrabber_Pimpl()
 {
-    Display* display = XOpenDisplay(NULL);
+    XFree(display);
+}
+
+ScreenGrabber_Pimpl::ScreenGrabber_Pimpl()
+    : display(XOpenDisplay(NULL)), rootWindow(DefaultRootWindow(display))
+{
+
+}
+
+unique_ptr<vector<unsigned char>> ScreenGrabber_Pimpl::grab_screen()
+{
     Window rootWindow = DefaultRootWindow(display);
     int x, y;
     unsigned int width, height, border_width, depth;
@@ -27,8 +34,7 @@ shared_ptr< vector<unsigned char> > ScreenGrabber::grab_screen() const
             DefaultVisual(display, 0),
             width,
             height);
-    auto out = cairo_helpers::cairo_to_mem_png(screen_surface);
+    unique_ptr<vector<unsigned char>> out = cairo_helpers::cairo_to_mem_png(screen_surface);
     cairo_surface_destroy(screen_surface);
     return out;
 }
-

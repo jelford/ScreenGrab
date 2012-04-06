@@ -38,7 +38,7 @@ KeyboardGrabberPimpl::~KeyboardGrabberPimpl()
     XFree(display);
 }
 
-void KeyboardGrabberPimpl::addToHandlers(unique_ptr< function<bool ()> > &handler, string key, bool ctrl, bool alt, bool shift) {
+void KeyboardGrabberPimpl::addToHandlers(unique_ptr< function<bool ()> > handler, string key, bool ctrl, bool alt, bool shift) {
     auto modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
     auto keycode = get_keycode_from_string(key);
     (*handler)();
