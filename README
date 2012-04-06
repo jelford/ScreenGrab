@@ -22,7 +22,8 @@ distribution straight out of the box.
 
 #Build ScreenGrab:
 
-Cross-platform dependencies
+Cross-platform dependencies:
+
     Fedora:
     sudo yum install boost-devel    # Development headers
 
