@@ -8,6 +8,7 @@
 #include "keyboard_pimpl.hpp"
 
 using namespace std;
+using namespace screengrab;
 
 KeyCode KeyboardGrabberPimpl::get_keycode_from_string(string key_string) const{
     const char* key = key_string.c_str();
@@ -41,7 +42,6 @@ KeyboardGrabberPimpl::~KeyboardGrabberPimpl()
 void KeyboardGrabberPimpl::addToHandlers(unique_ptr< function<bool ()> > handler, string key, bool ctrl, bool alt, bool shift) {
     auto modifierMask = (ctrl ? ControlMask : 0) | (shift ? ShiftMask : 0) | (alt ? Mod1Mask : 0);
     auto keycode = get_keycode_from_string(key);
-    (*handler)();
 
     // Set up the hook
     XGrabKey(display,

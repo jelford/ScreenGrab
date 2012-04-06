@@ -6,18 +6,21 @@
 
 #include <X11/Xlib.h>
 
-class ScreenGrabber_Pimpl
+namespace screengrab
 {
-    private:
-        Display* display;
-        Window rootWindow;
-        ScreenGrabber_Pimpl(ScreenGrabber_Pimpl const &);
-        ScreenGrabber_Pimpl& operator=(ScreenGrabber_Pimpl const &);
+    class ScreenGrabber_Pimpl
+    {
+        private:
+            Display* display;
+            Window rootWindow;
+            ScreenGrabber_Pimpl(ScreenGrabber_Pimpl const &);
+            ScreenGrabber_Pimpl& operator=(ScreenGrabber_Pimpl const &);
 
-    public:
-        ScreenGrabber_Pimpl();
-        virtual ~ScreenGrabber_Pimpl();
-        std::unique_ptr<std::vector<unsigned char>> grab_screen();
-};
+        public:
+            ScreenGrabber_Pimpl();
+            virtual ~ScreenGrabber_Pimpl();
+            std::unique_ptr<std::vector<unsigned char>> grab_screen();
+    };
+}
 
 #endif

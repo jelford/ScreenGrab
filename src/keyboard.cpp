@@ -5,6 +5,7 @@
 #include "keyboard_pimpl.hpp"
 
 using namespace std;
+using namespace screengrab;
 
 KeyboardGrabber::KeyboardGrabber() 
     : _pimpl(new KeyboardGrabberPimpl())

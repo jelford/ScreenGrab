@@ -3,10 +3,14 @@ import os
 target_platform = platform.uname()[0]
 print(target_platform)
 
-from scripts import platform_specific, headertools
+from scripts import platform_specific, headertools, libtools
 
 
 env = Environment()
+env.Append(CCFLAGS = ['--std=c++0x'])
+
+cross_platform_libs = ['boost_system-mt', 'boost_filesystem-mt']
+cross_platform_headers = ['boost/filesystem.hpp', 'boost/thread.hpp', 'thread', 'memory']
 
 if not env.GetOption('clean'):
     conf = Configure(env)
@@ -17,10 +21,15 @@ if not env.GetOption('clean'):
 
     hCheck = headertools.HeaderChecker(conf)
 
-    hCheck(['boost/filesystem.hpp', 'boost/shared_ptr.hpp', 'boost/function.hpp'],
-        message='ScreenGrab requires BOOST development headers to build')
+    hCheck(cross_platform_headers,
+        message='ScreenGrab requires boost development headers and c++0x (c++11) to build')
+    
+    lCheck = libtools.LibChecker(conf)
+    
+    lCheck(cross_platform_libs, 'ScreenGrab requires BOOST shared libraries to link properly')
 
     platform_specific.check_headers(conf)
+    platform_specific.check_libs(conf)
 
     env = conf.Finish()
     # Finish checks
@@ -40,4 +49,4 @@ platform_libs = platform_specific.libs
 SConscript('src/SConscript.py',
     variant_dir='build',
     duplicate=1, 
-    exports=['env', 'sources', 'platform_libs', 'target_platform'])
+    exports=['env', 'sources', 'cross_platform_libs', 'platform_libs', 'target_platform'])

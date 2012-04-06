@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <cairo/cairo.h>
+#include <thread>
 #include <boost/filesystem.hpp>
 #include <string>
 #include <vector>
@@ -12,6 +13,7 @@
 #include "keyboard.hpp"
 #include "screenshot.hpp"
 
+
 using namespace std;
 
 namespace screengrab {
@@ -19,12 +21,15 @@ namespace screengrab {
     typedef unique_ptr< vector<unsigned char> > bitvector;
 
     string get_output_filename() {
+            // TODO: Should replace all this with a config file!
+            static int counter = 0; // Avoid name clashes
             time_t epoch_time;
             epoch_time = time(NULL);
             stringstream output;
             output <<  OUTPUT_DIR;
             output << "/screengrab_";
             output << epoch_time;
+            output << counter++;
             output << ".png";
             return output.str();
     }
@@ -36,14 +41,18 @@ namespace screengrab {
                     ScreenGrabHandler(shared_ptr<ScreenGrabber> sg) : sg(sg)  { }
                     
                     bool operator()(void) const {
-                            // Get a bitvector representing a png of the screen
-                            bitvector png = sg->grab_screen();
+                            // Do this work in a thread, in case it's hard.
+                            thread([&sg]() {
+                                // Get a bitvector representing a png of the screen
+                                bitvector png = sg->grab_screen();
 
-                            // Dump the bigvector to a file
-                            ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
-                            ostream_iterator<unsigned char> file_iterator(outfile, NULL);
-                            assert(png);
-                            copy(png->begin(), png->end(), file_iterator);
+                                // Dump the bigvector to a file
+                                ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
+                                ostream_iterator<unsigned char> file_iterator(outfile, NULL);
+                                assert(png);
+                                copy(png->begin(), png->end(), file_iterator);
+                            });
+
                             return true;
                     }
     };

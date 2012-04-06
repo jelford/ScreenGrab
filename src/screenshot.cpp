@@ -3,6 +3,7 @@
 #include "screengrabber_pimpl.hpp"
 
 using namespace std;
+using namespace screengrab;
 
 ScreenGrabber::ScreenGrabber() : _pimpl(new ScreenGrabber_Pimpl())
 {

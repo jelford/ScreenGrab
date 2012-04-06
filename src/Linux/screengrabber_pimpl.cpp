@@ -3,8 +3,9 @@
 #include <X11/Xlib.h>
 #include <cairo/cairo-xlib.h>
 #include "cairo_helper.hpp"
-#include <iostream>
+
 using namespace std;
+using namespace screengrab;
 
 ScreenGrabber_Pimpl::~ScreenGrabber_Pimpl()
 {
