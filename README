@@ -42,10 +42,18 @@ for your favourite platform, or you can probably just do:
     Fedora:
     sudo yum install scons
 
+You can get a local version of `SCons` which will not need
+installing into your system by doing
+
+    ./get-scons
+
 Build is simply:
 
     cd source/directory/for/ScreenGrab/
     scons
+
+or in the case you are using a local install:
+    python ./scons.py
 
 You will find the appropriate binary in ./build
 
