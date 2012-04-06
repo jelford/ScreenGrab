@@ -5,34 +5,58 @@ the included code are released under the GPLv3.
 
 #Dependencies:
 
-This code is designed to run on an X-Windows system. Nearly every
-modern gnu/linux distribution runs with an X-Server and the Cairo
-graphics library (which is also a dependency). To compile this
-code, you will need to install headers for each of those libraries:
+This code is designed first and foremost to run on an X-Windows system.
+Note it is practical to port the code to Windows/Darwin, but would
+require some time and access to one of those platforms.
+
+## All Platforms:
+Only `boost`, which you almost certainly have installed anyway. If not,
+Linux users can do a command like the following:
+
+    sudo yum install boost          
+
+## Linux:
+An `X` server (your display manager), and `cairo` (for processing the
+images). Both of these are installed on nearly every modern gnu/linux
+distribution straight out of the box.
+
+#Build ScreenGrab:
+
+Cross-platform dependencies
+    Fedora:
+    sudo yum install boost-devel    # Development headers
+
+Linux-specific libraries:
 
     Fedora:
     sudo yum install cairo-devel
     sudo yum groupinstall "X Development Tools"
 
-You will also need boost modules installed
+Similar commands are available for Debian/Ubuntu users.
+
+ScreenGrab uses the `SCons` build system. If it is not already
+installed on your system, it is available from the `SCons` website
+for your favourite platform, or you can probably just do:
 
     Fedora:
-    sudo yum install boost          # For users
-    sudo yum install boost-devel    # Development headers
+    sudo yum install scons
 
-Similar commands are available for Debian/Ubuntu users
+Build is simply:
 
-#Build ScreenGrab:
+    cd source/directory/for/ScreenGrab/
+    scons
 
- * `./autogen.sh` will run Autoconf and friends
- * Move to a build directory
- * `<path to source>/configure`
- * `make`
+You will find the appropriate binary in ./build
 
-#Install ScreenGrab:
+## Build options
 
- * `make install`
- * You can remove it with `make uninstall`
+Currently, output directory and hot-keys are baked in at build-time.
+You can set the output directory by running:
+
+    scons interactive=1
+
+Hotkeys and output directory will in the future be loaded from a config
+file.
 
 #Usage:
 
@@ -40,7 +64,3 @@ Similar commands are available for Debian/Ubuntu users
  * `ctrl+prtscn` to Capture a screen shot and save to the output dir
    * Grabs are saved under `~/.screengrab/output/`
  * `ctrl+alt+q` to kill the program
-
-# Future work:
-
-This program is totally unfinished. Improvements will abound.
