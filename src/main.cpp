@@ -48,10 +48,10 @@ namespace screengrab {
                                 bitvector png = sg->grab_screen();
 
                                 // Dump the bigvector to a file
-                                //ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
-                                //ostream_iterator<unsigned char> file_iterator(outfile, NULL);
-                                //assert(png);
-                                //copy(png->begin(), png->end(), file_iterator);
+                                ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
+                                ostream_iterator<unsigned char> file_iterator(outfile, NULL);
+                                assert(png);
+                                copy(png->begin(), png->end(), file_iterator);
                             });
 
                             return true;
