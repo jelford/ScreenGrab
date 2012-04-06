@@ -9,7 +9,7 @@ from scripts import platform_specific, headertools, libtools
 env = Environment()
 env.Append(CCFLAGS = ['--std=c++0x'])
 
-cross_platform_libs = ['boost_system-mt', 'boost_filesystem-mt']
+cross_platform_libs = ['boost_system-mt', 'boost_filesystem-mt', 'boost_thread-mt']
 cross_platform_headers = ['boost/filesystem.hpp', 'boost/thread.hpp', 'thread', 'memory']
 
 if not env.GetOption('clean'):
