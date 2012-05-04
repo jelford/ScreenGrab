@@ -7,68 +7,53 @@
 // Image data
 #include <vector>
 
-// Copying data into a filestream
-#include <sstream>
-#include <fstream>
-#include <ostream>
-#include <iterator>
-
 // File output
 #include <boost/filesystem.hpp> // boost::filesystem::create_directories
-#include <time.h>               // file timestamps
 
 // Application libraries
 #include "keyboard.hpp"
 #include "screenshot.hpp"
-
+#include "filewriter.hpp"
 
 using namespace std;
 
 namespace screengrab {
     
     typedef unique_ptr< vector<unsigned char> > bitvector;
-
-    string get_output_filename() {
-            // TODO: Should replace all this with a config file!
-            // TODO: This isn't thread safe, since counter++ isn't atomic.
-            static int counter = 0; // Avoid(ish) name clashes TODO: Naughty.
-            time_t epoch_time;
-            epoch_time = time(NULL);
-            stringstream output;
-            output <<  OUTPUT_DIR;
-            output << "/screengrab_";
-            output << epoch_time;
-            output << counter++;
-            output << ".png";
-            return output.str();
-    }
-
-    class ScreenGrabHandler {
+    
+    class ScreenGrabHandler
+    {
             private:
                     shared_ptr<ScreenGrabber> sg;
+                    shared_ptr<screengrab::FileWriter> file_writer;
             public:
-                    ScreenGrabHandler(shared_ptr<ScreenGrabber> sg) : sg(sg)  { }
+                    ScreenGrabHandler(shared_ptr<ScreenGrabber> sg) : sg(sg), file_writer(new FileWriter())  { }
                     
-                    bool operator()(void) const {
+                    virtual bool operator()(void) const 
+                    {
                             // Do this work in a thread, in case it's hard.
-                            thread([&sg]() {
+                            thread([&sg, &file_writer]() {
                                 // Get a bitvector representing a png of the screen
                                 bitvector png = sg->grab_screen();
-
-                                // Dump the bigvector to a file
-                                ofstream outfile(get_output_filename().c_str(), ios::out | ios::binary);
-                                ostream_iterator<unsigned char> file_iterator(outfile, NULL);
-                                assert(png);
-                                copy(png->begin(), png->end(), file_iterator);
+                                
+                                file_writer->dump(move(png));
                             }).detach();
 
                             return true;
                     }
+
+                    /* 
+                     * We can't use std::move when we pass this into a std::function (TODO: Why?), so have a copy
+                     * constructor but don't keep making new versions of the fields
+                     */
+                    ScreenGrabHandler(ScreenGrabHandler const & other) : sg(other.sg), file_writer(other.file_writer) { }
     };
 
-    class QuitHandler {
+    class QuitHandler 
+    {
             public:
-                    bool operator()(void) const {
+                    virtual bool operator()(void) const 
+                    {
                             return false;
                     }
     };
@@ -82,15 +67,24 @@ int main(int argc, char ** argv) {
         boost::filesystem::create_directories(OUTPUT_DIR);
 
         KeyboardGrabber keyboard;
+
+        /* 
+         * Connections to the X server are expensive; don't want to keep
+         * making new ones, use exactly one grabber for the program
+         */
         shared_ptr<ScreenGrabber> screenGrabber(new ScreenGrabber());
-        unique_ptr< function< bool () > > screenHandleFunction(new function< bool () >(ScreenGrabHandler(screenGrabber)));
+
+        unique_ptr<function<bool()>> screenHandleFunction(new function<bool()>(ScreenGrabHandler(screenGrabber)));
+
         keyboard.addToHandlers(move(screenHandleFunction),
                                 "Print",
                                 true, false, false);
-        unique_ptr< function< bool() > > quitHandleFunction(new function< bool () >(QuitHandler()));
+
+
+        unique_ptr<function<bool()>> quitHandleFunction(new function<bool()>(QuitHandler()));
         keyboard.addToHandlers(move(quitHandleFunction),
                                 "q",
-                                true, true, false); 
+                                true, true, false);
         keyboard.mainloop();
         return 0;
 }

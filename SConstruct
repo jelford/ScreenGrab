@@ -41,7 +41,7 @@ if not env.GetOption('clean'):
     env.Append(CPPDEFINES = {'OUTPUT_DIR': '\\"{output_dir}\\"'.format(output_dir=output_dir)})
     env.Append(CXXFLAGS = ['-O3'])
 
-sources = [x.format(platform=target_platform) for x in ['main.cpp', 'keyboard.cpp', '{platform}/keyboard_pimpl.cpp', 'screenshot.cpp', '{platform}/screengrabber_pimpl.cpp']]
+sources = [x.format(platform=target_platform) for x in ['main.cpp', 'keyboard.cpp', 'filewriter.cpp', '{platform}/keyboard_pimpl.cpp', 'screenshot.cpp', '{platform}/screengrabber_pimpl.cpp']]
 
 
 platform_libs = platform_specific.libs
