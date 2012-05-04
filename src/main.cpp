@@ -1,16 +1,23 @@
 #include <iostream>
-#include <memory>
-#include <cairo/cairo.h>
-#include <thread>
-#include <boost/filesystem.hpp>
-#include <boost/thread.hpp>
 #include <string>
+
+#include <memory>               // shared_ptr, unique_ptr
+#include <thread>               // std::thread
+
+// Image data
 #include <vector>
+
+// Copying data into a filestream
 #include <sstream>
 #include <fstream>
 #include <ostream>
 #include <iterator>
-#include <time.h>
+
+// File output
+#include <boost/filesystem.hpp> // boost::filesystem::create_directories
+#include <time.h>               // file timestamps
+
+// Application libraries
 #include "keyboard.hpp"
 #include "screenshot.hpp"
 
@@ -23,7 +30,8 @@ namespace screengrab {
 
     string get_output_filename() {
             // TODO: Should replace all this with a config file!
-            static int counter = 0; // Avoid name clashes
+            // TODO: This isn't thread safe, since counter++ isn't atomic.
+            static int counter = 0; // Avoid(ish) name clashes TODO: Naughty.
             time_t epoch_time;
             epoch_time = time(NULL);
             stringstream output;
@@ -43,7 +51,7 @@ namespace screengrab {
                     
                     bool operator()(void) const {
                             // Do this work in a thread, in case it's hard.
-                            boost::thread([&sg]() {
+                            thread([&sg]() {
                                 // Get a bitvector representing a png of the screen
                                 bitvector png = sg->grab_screen();
 
@@ -52,7 +60,7 @@ namespace screengrab {
                                 ostream_iterator<unsigned char> file_iterator(outfile, NULL);
                                 assert(png);
                                 copy(png->begin(), png->end(), file_iterator);
-                            });
+                            }).detach();
 
                             return true;
                     }
@@ -70,7 +78,9 @@ namespace screengrab {
 using namespace screengrab;
 
 int main(int argc, char ** argv) {
+        // TODO OUTPUT_DIR should come from a config file
         boost::filesystem::create_directories(OUTPUT_DIR);
+
         KeyboardGrabber keyboard;
         shared_ptr<ScreenGrabber> screenGrabber(new ScreenGrabber());
         unique_ptr< function< bool () > > screenHandleFunction(new function< bool () >(ScreenGrabHandler(screenGrabber)));
